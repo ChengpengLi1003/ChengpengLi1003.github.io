@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:title" content="Chengpeng Li">
+<meta property="og:description" content="Qwen foundation model team at Alibaba, founder of Agent Hub. Reasoning, cowork, large-scale RL, LLM4Game, test-time scaling.">
+<link rel="alternate" hreflang="zh-CN" href="?lang=zh">
+<link rel="alternate" hreflang="en" href="?lang=en">
+<title>Chengpeng Li</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Chengpeng Li, Qwen foundation model team at Alibaba and founder of Agent Hub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500&display=swap">
+<style>
+/* Layout: a fixed WebGL night sky behind two editorial sections, About and Papers. Each owns an empty "slot"
+   where the stars gather into its figure (galaxy, infinity); text sits on a soft dark veil so the sky never fights it.
+   The palette tokens below are the Indigo defaults; the sky script drifts them through five palettes. */
+:root {
+  --bg0: #03050C;
+  --bg1: #0A1026;
+  --neb1: #1A2C6E;
+  --neb2: #3B1D5E;
+  --fg: #EEF2FB;
+  --accent: #A9C8FF;
+  --fg-2: color-mix(in srgb, var(--fg) 76%, transparent);
+  --fg-3: color-mix(in srgb, var(--fg) 56%, transparent);
+  --line: color-mix(in srgb, var(--fg) 14%, transparent);
+
+  --font-display: "Cormorant Garamond", "Cormorant", "Noto Serif SC", "Songti SC", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Hanken Grotesk", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --maxw: 1180px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  margin: 0; background: var(--bg0); color: var(--fg);
+  font: 400 16px/1.7 var(--font-body);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg0); }
+a { color: inherit; }
+:focus-visible { outline: 1px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+.wrap {
+  max-width: var(--maxw); margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- sky ---------- */
+.sky {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  background:
+    radial-gradient(60% 55% at 80% 12%, color-mix(in srgb, var(--neb1) 60%, transparent), transparent 70%),
+    radial-gradient(55% 50% at 8% 88%, color-mix(in srgb, var(--neb2) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+}
+.sky::after {
+  content: ""; position: absolute; inset: -20%;
+  background: radial-gradient(35% 30% at 50% 50%, color-mix(in srgb, var(--neb1) 28%, transparent), transparent 70%);
+  animation: drift 60s ease-in-out infinite alternate;
+}
+@keyframes drift { from { transform: translate(-12%, 6%) scale(1); } to { transform: translate(14%, -8%) scale(1.25); } }
+#stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; display: block; }
+.page { position: relative; z-index: 2; overflow-x: clip; }
+
+/* an occasional meteor; JS re-aims each one after it burns out */
+.meteors { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.meteors i { position: absolute; left: var(--x, 70%); top: var(--y, 12%); width: 180px; height: 1.5px; border-radius: 2px; transform-origin: left center; opacity: 0;
+  background: linear-gradient(90deg, var(--fg), color-mix(in srgb, var(--accent) 60%, transparent) 25%, transparent);
+  filter: drop-shadow(0 0 6px var(--accent)); animation: meteor var(--d, 1.4s) cubic-bezier(.3,.1,.6,1) var(--w, 6s) 1 both; }
+@keyframes meteor {
+  0% { opacity: 0; transform: rotate(var(--a, -28deg)) translateX(0) scaleX(.25); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a, -28deg)) translateX(-560px) scaleX(1); }
+}
+
+/* entrance: the introduction settles in while the galaxy gathers */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.hero .copy > * { animation: rise 1s cubic-bezier(.2,.7,.2,1) both; }
+.hero .copy > :nth-child(2) { animation-delay: .08s; }
+.hero .copy > :nth-child(3) { animation-delay: .16s; }
+.hero .copy > :nth-child(4) { animation-delay: .26s; }
+.hero .copy > :nth-child(5) { animation-delay: .36s; }
+.hero .copy > :nth-child(6) { animation-delay: .46s; }
+.hero .copy > :nth-child(7) { animation-delay: .56s; }
+
+/* soft dark veil behind reading text, feathered so it reads as shade rather than a box */
+.veil { position: relative; isolation: isolate; }
+.veil::before { content: ""; position: absolute; inset: -44px -60px; z-index: -1; border-radius: 64px; background: color-mix(in srgb, var(--bg0) 62%, transparent); filter: blur(34px); pointer-events: none; }
+
+/* ---------- header ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; transition: background .4s, border-color .4s; border-bottom: 1px solid transparent; }
+.top.scrolled { background: color-mix(in srgb, var(--bg0) 62%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom-color: var(--line); }
+.top-in { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 64px; }
+.wordmark { font-family: var(--font-display); font-size: 22px; font-weight: 500; text-decoration: none; white-space: nowrap; letter-spacing: .01em; }
+.wordmark em { color: var(--accent); }
+.top-right { display: flex; align-items: center; gap: 26px; min-width: 0; }
+.nav { display: flex; gap: 28px; overflow-x: auto; min-width: 0; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { font-size: 11.5px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-2); text-decoration: none; white-space: nowrap; transition: color .3s; }
+.nav a:hover { color: var(--fg); }
+.lang { flex: none; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; color: var(--fg-2); font: 500 12px var(--font-body); letter-spacing: .06em; cursor: pointer; transition: color .3s, border-color .3s; }
+.lang:hover { color: var(--fg); border-color: var(--accent); }
+@media (max-width: 640px) { .nav { gap: 16px; } .nav a { font-size: 10.5px; letter-spacing: .14em; } .wordmark { font-size: 19px; } .top-right { gap: 14px; } .top-in { gap: 12px; } }
+
+/* Chinese: no faux italics, tighter tracking on labels, roomier lines */
+:root[lang="zh-CN"] em { font-style: normal; }
+:root[lang="zh-CN"] .eyebrow, :root[lang="zh-CN"] .nav a, :root[lang="zh-CN"] .facts dt, :root[lang="zh-CN"] .stat span,
+:root[lang="zh-CN"] .cue, :root[lang="zh-CN"] .pf, :root[lang="zh-CN"] .slot-hint, :root[lang="zh-CN"] .pvenue,
+:root[lang="zh-CN"] .sky-name, :root[lang="zh-CN"] .pcite small { letter-spacing: .1em; }
+:root[lang="zh-CN"] .sec-head h2 { letter-spacing: .02em; }
+:root[lang="zh-CN"] .intro, :root[lang="zh-CN"] .facts dd, :root[lang="zh-CN"] .psum, :root[lang="zh-CN"] .sec-head p { line-height: 1.9; }
+
+/* ---------- shared ---------- */
+.eyebrow { font-size: 11.5px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--accent); margin: 0 0 20px; }
+.slot { position: relative; width: 100%; cursor: grab; touch-action: pan-y; border-radius: 50%; }
+.slot:active { cursor: grabbing; }
+.slot-hint { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-3); opacity: 0; transition: opacity .5s; white-space: nowrap; pointer-events: none; }
+.slot:hover .slot-hint, .slot:focus-visible .slot-hint { opacity: 1; }
+.copy { min-width: 0; }
+.ilink { color: var(--fg); text-decoration: none; background-image: linear-gradient(color-mix(in srgb, var(--accent) 55%, transparent), color-mix(in srgb, var(--accent) 55%, transparent)); background-size: 100% 1px; background-position: 0 100%; background-repeat: no-repeat; transition: color .3s, background-size .3s; }
+.ilink:hover { color: var(--accent); }
+
+/* ---------- about ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); align-items: start; gap: 40px; padding-block: 36px 64px; }
+.hero .slot { height: min(46vw, 620px); margin-top: clamp(0px, 3vw, 40px); }
+.avatar { position: relative; width: 104px; height: 104px; margin: 0 0 28px; }
+.avatar::before { content: ""; position: absolute; inset: -6px; border-radius: 50%; background: conic-gradient(from 0deg, var(--accent), transparent 30%, color-mix(in srgb, var(--accent) 55%, transparent) 55%, transparent 80%, var(--accent)); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px)); mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1px)); animation: spin 28s linear infinite; }
+@keyframes spin { to { transform: rotate(1turn); } }
+.avatar-mono { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 50%; background: var(--bg1); color: var(--accent); font: italic 300 36px var(--font-display); }
+.avatar img { position: relative; display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: 50% 14%; background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--fg) 26%, var(--bg1)), var(--bg1)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 22%, transparent), 0 0 44px color-mix(in srgb, var(--accent) 32%, transparent); }
+.name { font-family: var(--font-display); font-weight: 300; font-size: clamp(60px, 8vw, 120px); line-height: .9; letter-spacing: -.02em; margin: 0; }
+.name em { font-style: italic; color: var(--accent); }
+.lede { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.32; margin: 24px 0 0; max-width: 26ch; color: var(--fg); }
+.intro { margin: 26px 0 0; max-width: 56ch; color: var(--fg-2); font-size: 16.5px; line-height: 1.8; }
+.intro strong { color: var(--fg); font-weight: 500; }
+.facts { margin: 30px 0 0; max-width: 60ch; border-top: 1px solid var(--line); }
+.facts > div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 4px 20px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.facts dt { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-3); padding-top: 4px; }
+.facts dd { margin: 0; min-width: 0; color: var(--fg); font-size: 15px; line-height: 1.65; }
+.facts dd small { display: block; color: var(--fg-3); font-size: 13px; margin-top: 2px; }
+.dots span { white-space: nowrap; }
+.dots span:not(:last-child)::after { content: "·"; color: var(--fg-3); margin: 0 .55em; }
+.contact { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; }
+.contact button { background: none; border: 0; padding: 0; color: var(--fg-3); font: 500 11px var(--font-body); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; transition: color .3s; }
+.contact button:hover { color: var(--accent); }
+.contact + .contact { margin-top: 4px; }
+.xhs-tag { color: var(--fg-3); font-size: 13px; }
+.facts dd small.cnote { margin-top: 8px; color: var(--fg-2); }
+.stats { display: flex; flex-wrap: wrap; gap: 16px 40px; margin-top: 30px; }
+.stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 34px; line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
+.stat span { display: block; margin-top: 6px; font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-3); }
+.cue { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-3); }
+.cue i { display: block; width: 64px; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); transform-origin: left; animation: cue 2.6s ease-in-out infinite; }
+@keyframes cue { 0%, 100% { transform: scaleX(.3); opacity: .5; } 50% { transform: scaleX(1); opacity: 1; } }
+
+/* ---------- papers ---------- */
+.papers { padding-block: clamp(72px, 10vw, 140px) clamp(72px, 9vw, 120px); }
+.papers .slot { height: min(32vw, 320px); max-width: 760px; margin: 0 auto 36px; border-radius: 40%; }
+.sec-head { text-align: center; }
+.sec-head h2 { font-family: var(--font-display); font-weight: 300; font-size: clamp(42px, 5.4vw, 72px); line-height: 1.02; letter-spacing: -.01em; margin: 0; }
+.sec-head h2 em { font-style: italic; color: var(--accent); }
+.sec-head p { color: var(--fg-2); max-width: 52ch; margin: 18px auto 0; }
+.pfilters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px 28px; margin: 36px 0 12px; }
+.pf { background: none; border: 0; border-bottom: 1px solid transparent; padding: 4px 0; color: var(--fg-3); font: 500 11.5px var(--font-body); letter-spacing: .18em; text-transform: uppercase; cursor: pointer; transition: color .3s, border-color .3s; }
+.pf:hover { color: var(--fg); }
+.pf[aria-pressed="true"] { color: var(--fg); border-color: var(--accent); }
+.pf sup { font-size: 9px; margin-left: 3px; color: var(--fg-3); letter-spacing: 0; }
+.ygroup { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 36px; padding-block: 34px; border-top: 1px solid var(--line); }
+.ylabel { font-family: var(--font-display); font-weight: 300; font-size: 56px; line-height: .9; color: var(--fg-3); font-variant-numeric: lining-nums; position: sticky; top: 96px; align-self: start; }
+.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 36px; }
+.pitem { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 36px; }
+.pmain { min-width: 0; }
+.ptitle { font-family: var(--font-display); font-size: clamp(22px, 2vw, 27px); font-weight: 500; line-height: 1.2; text-decoration: none; transition: color .3s; }
+.ptitle:hover { color: var(--accent); }
+.pvenue { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 11px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+.pvenue .fa { color: var(--fg); }
+.psum { color: var(--fg-2); font-size: 15px; line-height: 1.75; margin: 10px 0 0; max-width: 68ch; }
+.pauth { font-size: 13px; color: var(--fg-3); margin-top: 8px; }
+.pauth b { color: var(--fg-2); font-weight: 500; }
+.pcite { text-align: right; font-family: var(--font-display); font-size: 28px; line-height: 1; font-variant-numeric: lining-nums tabular-nums; padding-top: 4px; }
+.pcite small { display: block; margin-top: 6px; font: 500 10.5px var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); }
+.note { font-size: 12.5px; color: var(--fg-3); margin: 8px 0 0; padding-top: 22px; border-top: 1px solid var(--line); }
+
+/* ---------- guestbook ---------- */
+.guest { padding-block: clamp(56px, 8vw, 110px) clamp(72px, 9vw, 120px); }
+.guest .slot { height: min(30vw, 300px); max-width: 560px; margin: 0 auto 28px; }
+.gb { max-width: 720px; margin: 40px auto 0; }
+.gb-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 20px; }
+.field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.field label, .topics legend { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-3); }
+.field input, .field textarea { width: 100%; background: color-mix(in srgb, var(--bg0) 50%, transparent); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; color: var(--fg); font: 400 15.5px/1.6 var(--font-body); transition: border-color .3s, background .3s, box-shadow .3s; }
+.field textarea { min-height: 150px; resize: vertical; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); background: color-mix(in srgb, var(--bg0) 70%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.field input::placeholder, .field textarea::placeholder { color: var(--fg-3); }
+.field.full { margin-top: 20px; }
+.topics { border: 0; padding: 0; margin: 22px 0 0; display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.topics legend { padding: 0; margin-bottom: 10px; }
+.topics label { position: relative; cursor: pointer; }
+.topics input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.topics span { display: inline-block; padding: 7px 15px; border-radius: 999px; border: 1px solid var(--line); font-size: 13.5px; color: var(--fg-2); transition: color .3s, background .3s, border-color .3s; }
+.topics label:hover span { border-color: var(--fg-3); color: var(--fg); }
+.topics input:checked + span { color: var(--bg0); background: var(--fg); border-color: var(--fg); }
+.topics input:focus-visible + span { outline: 1px solid var(--accent); outline-offset: 3px; }
+.gb-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-top: 20px; }
+.gb-status { margin: 0; font-size: 13.5px; color: var(--fg-2); min-height: 1.5em; flex: 1 1 240px; }
+.gb-status.ok { color: var(--accent); }
+.gb-status.err { color: #FFB4A8; }
+.gb-status a { color: inherit; }
+.gb-send { display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 999px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--fg); font: 500 14px var(--font-body); letter-spacing: .04em; cursor: pointer; transition: background .3s, box-shadow .3s; }
+.gb-send:hover { background: color-mix(in srgb, var(--accent) 28%, transparent); box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 35%, transparent); }
+.gb-send[disabled] { opacity: .6; cursor: progress; }
+.gb-privacy { font-size: 12px; color: var(--fg-3); margin: 22px 0 0; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.wall-wrap { max-width: 900px; margin: 64px auto 0; }
+.wall-h { font: 500 11.5px var(--font-body); letter-spacing: .24em; text-transform: uppercase; color: var(--fg-3); text-align: center; margin: 0 0 20px; }
+.wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.wall li { padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--bg0) 45%, transparent); min-width: 0; }
+.wall q { display: block; font-family: var(--font-display); font-style: italic; font-size: 19px; line-height: 1.5; overflow-wrap: anywhere; }
+.wall span { display: block; margin-top: 10px; font-size: 12px; color: var(--fg-3); letter-spacing: .06em; }
+:root[lang="zh-CN"] .field label, :root[lang="zh-CN"] .topics legend, :root[lang="zh-CN"] .wall-h { letter-spacing: .1em; }
+
+/* ---------- footer ---------- */
+.foot { padding-block: 32px 96px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; color: var(--fg-3); font-size: 12.5px; }
+
+/* ---------- sky colour control ---------- */
+.skyctl { position: fixed; z-index: 25; left: max(16px, env(safe-area-inset-left, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; padding: 5px 5px 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg0) 60%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.sky-dots { display: flex; align-items: center; gap: 1px; }
+.sky-dots button { width: 18px; height: 18px; padding: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; }
+.sky-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); opacity: .4; transition: transform .5s, opacity .5s, box-shadow .5s; }
+.sky-dots button:hover::before { opacity: .85; }
+.sky-dots button[aria-current="true"]::before { opacity: 1; transform: scale(1.4); box-shadow: 0 0 10px var(--c), 0 0 20px var(--c); }
+.sky-name { min-width: 4.6em; font-size: 10.5px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fg-2); }
+.sky-pause { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: none; color: var(--fg-2); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.sky-pause:hover { color: var(--fg); border-color: var(--fg-3); }
+.sky-pause .i-play, .sky-pause[aria-pressed="true"] .i-pause { display: none; }
+.sky-pause[aria-pressed="true"] .i-play { display: block; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 4px; padding-block: 0 56px; }
+  .hero .slot { height: min(62vw, 340px); order: -1; margin-top: 0; }
+  .ygroup { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .ylabel { position: static; font-size: 42px; }
+  .veil::before { inset: -28px -24px; filter: blur(26px); }
+}
+@media (max-width: 560px) {
+  .facts > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .papers .slot { height: 46vw; }
+  .gb-row, .wall { grid-template-columns: minmax(0, 1fr); }
+  .guest .slot { height: 50vw; }
+  .pitem { grid-template-columns: minmax(0, 1fr); }
+  .pcite { text-align: left; font-size: 20px; display: flex; align-items: baseline; gap: 8px; padding: 0; }
+  .pcite small { margin: 0; }
+  .stats { gap: 16px 28px; }
+  .foot { padding-block: 28px 110px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+<div class="meteors" aria-hidden="true"><i></i><i></i></div>
+
+<div class="page">
+<header class="top" id="top">
+  <div class="wrap top-in">
+    <a class="wordmark" href="#home">Chengpeng <em>Li</em></a>
+    <div class="top-right">
+      <nav class="nav" aria-label="Sections">
+        <a href="#home" data-i18n="nav.about">About</a>
+        <a href="#papers" data-i18n="nav.papers">Papers</a>
+        <a href="#guestbook" data-i18n="nav.guest">Guestbook</a>
+      </nav>
+      <button class="lang" id="langBtn" type="button" lang="zh-CN" aria-label="切换到中文">中文</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="wrap hero" id="home">
+  <div class="copy veil">
+    <div class="avatar">
+      <span class="avatar-mono" aria-hidden="true">CL</span>
+      <img id="avatar" src="avatar.jpg" alt="Chengpeng Li" width="104" height="104" decoding="async">
+    </div>
+    <p class="eyebrow" data-i18n="hero.eyebrow">Qwen Team, Alibaba · Founder of Agent Hub</p>
+    <h1 class="name">Chengpeng<br><em>Li</em></h1>
+    <p class="lede" lang="en">solve intelligence and use it to solve everything else</p>
+    <p class="intro" id="intro"></p>
+    <dl class="facts">
+      <div><dt data-i18n="f.edu">Education</dt><dd data-i18n="f.eduV">Ph.D., University of Science and Technology of China <small>USTC · 2021–2026</small>Bachelor's, University of Electronic Science and Technology of China <small>UESTC · 2017–2021</small></dd></div>
+      <div><dt data-i18n="f.research">Research</dt><dd class="dots" data-i18n="f.researchV"><span>Reasoning</span><span>Cowork</span><span>Large-scale RL</span><span>LLM4Game</span><span>Test-time scaling</span></dd></div>
+      <div><dt data-i18n="f.interests">Interests</dt><dd class="dots" data-i18n="f.interestsV"><span>Recursive self-improvement (RSI)</span><span>Thinking patterns</span><span>Agentic patterns</span><span>Reinforcement learning</span></dd></div>
+      <div><dt data-i18n="f.community">Community</dt><dd id="community" data-i18n="f.communityV">Founder of <strong>Agent Hub</strong>, a well-known LLM community</dd></div>
+      <div><dt data-i18n="f.contact">Contact</dt><dd><div class="contact" id="contact"></div><div class="contact" id="xhs"></div><small class="cnote" data-i18n="f.contactNote">DM me on Xiaohongshu or email me to join Agent Hub, explore a collaboration, or ask about internships.</small></dd></div>
+    </dl>
+    <div class="stats">
+      <div class="stat"><b>30,997</b><span data-i18n="stat.cites">citations</span></div>
+      <div class="stat"><b>26</b><span data-i18n="stat.h">h-index</span></div>
+      <div class="stat"><b id="modelCount">12</b><span data-i18n="stat.models">Qwen models</span></div>
+    </div>
+  </div>
+  <div class="slot" data-shape="0" tabindex="0" data-i18n-aria="slot.galaxy" aria-label="Spiral galaxy of stars. Drag or use arrow keys to rotate."><span class="slot-hint" data-i18n="hint">drag to rotate</span></div>
+  <div class="cue" data-i18n="cue"><i></i>Scroll, and the stars rearrange</div>
+</section>
+
+<section class="papers" id="papers">
+  <div class="wrap">
+    <div class="slot" data-shape="1" data-fit="width" tabindex="0" data-i18n-aria="slot.inf" aria-label="Stars forming an infinity loop. Drag or use arrow keys to rotate."><span class="slot-hint" data-i18n="hint">drag to rotate</span></div>
+    <div class="veil">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="pap.eyebrow">Papers</p>
+        <h2 data-i18n="pap.h2">Selected <em>papers</em></h2>
+        <p data-i18n="pap.lead">Newest first. Qwen technical reports are linked from the introduction above.</p>
+      </div>
+      <div class="pfilters" id="pfilters" role="group" data-i18n-aria="pap.filterAria" aria-label="Filter papers"></div>
+      <div id="years"></div>
+      <p class="note" data-i18n="pap.note">Citation counts from Google Scholar, October 20, 2026.</p>
+    </div>
+  </div>
+</section>
+
+<section class="guest" id="guestbook">
+  <div class="wrap">
+    <div class="slot" data-shape="2" tabindex="0" data-i18n-aria="slot.spark" aria-label="Stars forming a four-pointed sparkle. Drag or use arrow keys to rotate."><span class="slot-hint" data-i18n="hint">drag to rotate</span></div>
+    <div class="veil">
+      <div class="sec-head">
+        <p class="eyebrow" data-i18n="gb.eyebrow">Guestbook</p>
+        <h2 data-i18n="gb.h2">Leave a <em>message</em></h2>
+        <p data-i18n="gb.lead">Want to join Agent Hub, work together, or ask about an internship? Leave a note here and it comes straight to me.</p>
+      </div>
+      <form class="gb" id="gbForm" novalidate>
+        <div class="gb-row">
+          <div class="field"><label for="gbName" data-i18n="gb.name">Name</label><input id="gbName" name="name" maxlength="60" required autocomplete="name"></div>
+          <div class="field"><label for="gbContact" data-i18n="gb.contact">Email / WeChat / Xiaohongshu</label><input id="gbContact" name="contact" maxlength="120" autocomplete="email" data-i18n-ph="gb.contactPh" placeholder="Optional, so I can reply"></div>
+        </div>
+        <fieldset class="topics">
+          <legend data-i18n="gb.topic">About</legend>
+          <label><input type="radio" name="topic" value="agenthub" id="gbT1"><span data-i18n="gb.t1">Join Agent Hub</span></label>
+          <label><input type="radio" name="topic" value="collab" id="gbT2"><span data-i18n="gb.t2">Collaboration</span></label>
+          <label><input type="radio" name="topic" value="intern" id="gbT3"><span data-i18n="gb.t3">Internship</span></label>
+          <label><input type="radio" name="topic" value="hello" id="gbT4" checked><span data-i18n="gb.t4">Just saying hi</span></label>
+        </fieldset>
+        <div class="field full"><label for="gbBody" data-i18n="gb.body">Message</label><textarea id="gbBody" name="body" maxlength="2000" required data-i18n-ph="gb.bodyPh" placeholder="A few lines about you and what you have in mind"></textarea></div>
+        <div class="hp" aria-hidden="true"><label for="gbWebsite">Website</label><input id="gbWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="gb-foot">
+          <p class="gb-status" id="gbStatus" role="status"></p>
+          <button class="gb-send" type="submit" id="gbSend"><span aria-hidden="true">✦</span><span data-i18n="gb.send">Send message</span></button>
+        </div>
+        <p class="gb-privacy" data-i18n="gb.privacy">Visits are counted anonymously (country, referrer, device and browser). No IP addresses are stored.</p>
+      </form>
+      <div class="wall-wrap" id="wallWrap" hidden>
+        <h3 class="wall-h" data-i18n="gb.wall">Notes from visitors</h3>
+        <ul class="wall" id="wall"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap foot">
+  <span>© 2026 Chengpeng Li</span>
+  <span id="visitorLine" hidden></span>
+  <span data-i18n="foot.sky">The sky drifts through five colors.</span>
+</footer>
+</div>
+
+<div class="skyctl" id="skyctl">
+  <div class="sky-dots" id="skyDots" role="group" data-i18n-aria="sky.group" aria-label="Sky colors"></div>
+  <span class="sky-name" id="skyName">Indigo</span>
+  <button class="sky-pause" id="skyPause" type="button" aria-pressed="false" aria-label="Pause the color drift">
+    <svg class="i-pause" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect x="1.5" y="1" width="2.4" height="8" rx="1" fill="currentColor"/><rect x="6.1" y="1" width="2.4" height="8" rx="1" fill="currentColor"/></svg>
+    <svg class="i-play" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.2 1.2v7.6L8.6 5z" fill="currentColor"/></svg>
+  </button>
+</div>
+
+<script>
+/* ===== Edit these to update the page ===== */
+const PROFILE = {
+  name: "Chengpeng Li",
+  scholar: "https://scholar.google.com/citations?user=5pidFF8AAAAJ",
+  email: "lichengpeng.lcp@alibaba-inc.com",
+  xhs: { name: "白苏苏", id: "6897268817", url: "" },   // Xiaohongshu; set url to a profile link to make the name clickable
+  agentHub: "",   // optional link; "Agent Hub" in the Community row becomes a link once set
+  // Supabase project URL and public key: the legacy "anon" key or a new "sb_publishable_…" key (see supabase-setup.sql). Until set, visits are not logged
+  // and the guestbook opens the visitor's email app instead.
+  backend: { url: "https://eulhqfnbozkavshjmxzq.supabase.co", anonKey: "sb_publishable_3da6nNMiZwL-VrZjJjBKEw__0iwAl7o" },
+  // avatar.jpg next to this page is tried first, then the Google Scholar photo, then the CL monogram
+  avatarFallback: "https://scholar.googleusercontent.com/citations?view_op=view_photo&user=5pidFF8AAAAJ"
+};
+
+/* Qwen models I worked on, oldest first; each links to its blog, paper or project page. */
+const MODELS = [
+  { v: "Qwen2", url: "https://arxiv.org/abs/2407.10671" },
+  { v: "Qwen2-Math", url: "https://qwenlm.github.io/blog/qwen2-math/" },
+  { v: "Qwen2.5", url: "https://qwenlm.github.io/blog/qwen2.5/" },
+  { v: "Qwen2.5-Math", url: "https://arxiv.org/abs/2409.12122" },
+  { v: "Qwen3", url: "https://qwen.ai/blog?id=qwen3" },
+  { v: "Qwen3-Max", url: "https://qwen.ai/blog?id=qwen3-max" },
+  { v: "Qwen3.5", url: "https://qwen.ai/blog?id=qwen3.5" },
+  { v: "Qwen3.6", url: "https://qwen.ai/blog?id=qwen3.6" },
+  { v: "Qwen3.7", url: "https://qwen.ai/blog?id=qwen3.7" },
+  { v: "Qwen3.8", url: "https://qwen.ai/blog?id=qwen3.8" },
+  { v: "Qwen3.8-Omni", url: "https://arxiv.org/abs/2609.25611" },
+  { v: "Qwen4", url: "https://qwen.ai" }
+];
+
+const PAPERS = [
+  { short: "CoRT", title: "Teaching Language Models to Reason with Tools", authors: "C Li, Z Tang, Z Li, M Xue, K Bao, T Ding, R Sun, B Wang, X Wang, J Lin, …", venue: "NeurIPS 2025", year: 2025, cites: 22, first: true, tags: ["rsi", "tools"], url: "https://arxiv.org/abs/2506.09820",
+    summary: "CoRT (Code-integrated Reasoning within Thinking) iterates the thinking pattern of a large reasoning model that calls a code interpreter while it thinks: human priors are injected first, then the pattern is refined with Rubric-RFT and reinforcement learning.",
+    zh: "CoRT（Code-integrated Reasoning within Thinking）迭代大推理模型在思考中调用代码解释器的 thinking pattern：先注入人类先验，再通过 Rubric-RFT 和强化学习不断优化。",
+    kw: "cort code interpreter python tool tools integrated thinking pattern human prior rubric rft rl reinforcement math self-improvement" },
+  { short: "START", title: "START: Self-taught Reasoner with Tools", authors: "C Li, M Xue, Z Zhang, J Yang, B Zhang, B Yu, B Hui, J Lin, X Wang, D Liu", venue: "EMNLP 2025", year: 2025, cites: 57, first: true, tags: ["rsi", "tools"], url: "https://arxiv.org/abs/2503.04625",
+    summary: "Teaches a long chain-of-thought model to call a Python interpreter on its own. Hint-infer inserts prompts such as “Wait, maybe using Python here is a good idea.” during reasoning, and Hint-RFT fine-tunes on the resulting tool-use trajectories. Built on QwQ-32B.",
+    zh: "让长思维链模型自主调用 Python 解释器。Hint-infer 在推理中插入 “Wait, maybe using Python here is a good idea.” 这类提示，Hint-RFT 再用得到的工具调用轨迹做微调。基于 QwQ-32B。",
+    kw: "start self-taught tool tools python code interpreter hint infer rft long chain-of-thought qwq reasoning self-improvement" },
+  { short: "", title: "Calm Before the Storm: Unlocking Native Reasoning for Optimization Modeling", authors: "Z Tang, Z Ye, C Huang, X Huang, C Li, S Li, G Chen, M Yan, Z Wang, …", venue: "arXiv 2025", year: 2025, cites: 5, first: false, tags: ["reason"], url: "https://arxiv.org/abs/2510.04204",
+    summary: "Adapts large reasoning models to optimization modeling while keeping their native reasoning behavior.",
+    zh: "在保留大型推理模型原生推理方式的前提下，把它们适配到优化建模任务。",
+    kw: "optimization modeling operations research reasoning model native" },
+  { short: "AutoIF", title: "Self-play with Execution Feedback: Improving Instruction-following Capabilities of Large Language Models", authors: "G Dong, K Lu, C Li, T Xia, B Yu, C Zhou, J Zhou", venue: "ICLR 2025", year: 2025, cites: 145, first: false, tags: ["align"], url: "https://arxiv.org/abs/2406.13542",
+    summary: "Models write instructions, verification code and unit tests themselves, and execution feedback filters the data used to train instruction following.",
+    zh: "模型自己编写指令、验证代码和单元测试，再用执行反馈筛选指令遵循的训练数据。",
+    kw: "autoif instruction following self-play execution feedback verification code unit tests alignment" },
+  { short: "Chronos", title: "Chronos: Learning Temporal Dynamics of Reasoning Chains for Test-Time Scaling", authors: "K Zhang, J Liao, C Li, Z Xie, S Li, X Wang", venue: "ACL 2026 Findings", year: 2026, cites: 0, first: false, tags: ["reason"], url: "https://scholar.google.com/scholar?q=Chronos%3A+Learning+Temporal+Dynamics+of+Reasoning+Chains+for+Test-Time+Scaling",
+    summary: "Models how reasoning chains evolve over time to improve test-time scaling.",
+    zh: "建模推理链随时间演化的动态，以改进测试时扩展。",
+    kw: "chronos test-time scaling temporal dynamics reasoning chains inference" },
+  { short: "", title: "Answer Probing-Guided Search for Diverse Solution Exploration of LLMs", authors: "Y Fang, Q Shen, C Li, B Deng, W Shi, W Wang, F Feng, F Xu, D Liu", venue: "arXiv 2026", year: 2026, cites: 0, first: false, tags: ["reason"], url: "https://arxiv.org/abs/2608.30345",
+    summary: "Probes intermediate answers to steer search toward a more diverse set of solutions.",
+    zh: "通过探测中间答案引导搜索，探索更多样的解法。",
+    kw: "search diverse solutions exploration answer probing test-time" },
+  { short: "", title: "Unified Data Selection for LLM Reasoning", authors: "X Li, Y Ma, C Li, F Zhu, Y Yu, K Bao, W Wang, F Feng, D Liu", venue: "arXiv 2026", year: 2026, cites: 1, first: false, tags: ["data"], url: "https://arxiv.org/abs/2605.22389",
+    summary: "A single framework for choosing training data for reasoning models.",
+    zh: "为推理模型挑选训练数据的统一框架。",
+    kw: "data selection training data reasoning" },
+  { short: "DotaMath", title: "DotaMath: Decomposition of Thought with Code Assistance and Self-correction for Mathematical Reasoning", authors: "C Li, G Dong, M Xue, R Peng, X Wang, D Liu", venue: "arXiv 2024", year: 2024, cites: 35, first: true, tags: ["rsi", "tools", "data"], url: "https://arxiv.org/abs/2407.04078",
+    summary: "Breaks hard math problems into subtasks, solves them with code, reads the interpreter's feedback and self-corrects. Trained on DotaMathQA (574K query–response pairs); the 7B model reaches 64.8% on MATH.",
+    zh: "把复杂数学问题分解为子任务，用代码求解、读取解释器反馈并自我纠错。基于 DotaMathQA（57.4 万条问答对）训练，7B 模型在 MATH 上达到 64.8%。",
+    kw: "dotamath decomposition code assistance self-correction math mathematical tool tools interpreter gsm8k self-improvement" },
+  { short: "MuggleMath", title: "MuggleMath: Assessing the Impact of Query and Response Augmentation on Math Reasoning", authors: "C Li, Z Yuan, H Yuan, G Dong, K Lu, J Wu, C Tan, X Wang, C Zhou", venue: "ACL 2024", year: 2024, cites: 80, first: true, tags: ["rsi", "data"], url: "https://arxiv.org/abs/2310.05506",
+    summary: "Measures how query and response augmentation help math SFT, with new AugGSM8K and AugMATH datasets. Performance grows log-linearly with augmented data, while out-of-domain generalization stays weak.",
+    zh: "研究 query 与 response 增强对数学 SFT 的作用，构建了 AugGSM8K 与 AugMATH 数据集。性能随增强数据量呈对数线性增长，但域外泛化有限。",
+    kw: "mugglemath augmentation query response math sft data scaling gsm8k generalization" },
+  { short: "DMT", title: "How Abilities in Large Language Models are Affected by Supervised Fine-tuning Data Composition", authors: "G Dong, H Yuan, K Lu, C Li, M Xue, D Liu, W Wang, Z Yuan, C Zhou, …", venue: "ACL 2024", year: 2024, cites: 376, first: false, tags: ["data"], url: "https://arxiv.org/abs/2310.05492",
+    summary: "Studies how math, code and general abilities interact as SFT data composition changes, and proposes Dual-stage Mixed Fine-tuning (DMT) to limit forgetting.",
+    zh: "研究 SFT 数据配比变化时数学、代码与通用能力之间的相互影响，并提出双阶段混合微调（DMT）来缓解遗忘。",
+    kw: "dmt sft supervised fine-tuning data composition math code general abilities forgetting scaling" },
+  { short: "RFT", title: "Scaling Relationship on Learning Mathematical Reasoning with Large Language Models", authors: "Z Yuan, H Yuan, C Li, G Dong, K Lu, C Tan, C Zhou, J Zhou", venue: "arXiv 2023", year: 2023, cites: 754, first: false, tags: ["rsi", "data"], url: "https://arxiv.org/abs/2308.01825",
+    summary: "Relates pre-training loss, supervised data amount and augmented data to math reasoning ability, and introduces rejection-sampling fine-tuning (RFT).",
+    zh: "分析预训练损失、监督数据量与增强数据对数学推理能力的影响，并提出拒绝采样微调（RFT）。",
+    kw: "rft rejection sampling scaling relationship math mathematical reasoning data pre-training loss self-improvement" }
+];
+
+/* Sky palettes. The page drifts through them in order, starting from the one that fits the visitor's time of day. */
+const PALETTES = [
+  { en: "Indigo", zh: "靛夜", bg0: "#03050C", bg1: "#0A1026", neb1: "#1A2C6E", neb2: "#3B1D5E", fg: "#EEF2FB", accent: "#A9C8FF", c0: "#EAF1FF", c1: "#8FB8FF", c2: "#FFC690", warm: "#FFD9A8" },
+  { en: "Aurora", zh: "极光", bg0: "#020A0B", bg1: "#062520", neb1: "#0E5E4C", neb2: "#1B3A6E", fg: "#ECFBF6", accent: "#7FF0C6", c0: "#EFFFF8", c1: "#7FF0C6", c2: "#C9B6FF", warm: "#E4FFD0" },
+  { en: "Abyss", zh: "深海", bg0: "#03121C", bg1: "#09324C", neb1: "#0F5C72", neb2: "#163E7A", fg: "#EDFAFC", accent: "#86E7F2", c0: "#EFFFFF", c1: "#7FE6F2", c2: "#FFE9A8", warm: "#FFF1C4" },
+  { en: "Rose", zh: "晨曦", bg0: "#0A0716", bg1: "#2B1232", neb1: "#7A2E55", neb2: "#2F2D72", fg: "#FBEFF1", accent: "#FFB8A8", c0: "#FFEDF2", c1: "#FFAFA3", c2: "#B5C9FF", warm: "#FFC9A8" },
+  { en: "Amber", zh: "暮光", bg0: "#0C0614", bg1: "#2E1030", neb1: "#6B2150", neb2: "#40207A", fg: "#FCF2EA", accent: "#FFB878", c0: "#FFF3E6", c1: "#FFB067", c2: "#CDA8FF", warm: "#FFC07A" }
+];
+
+/* Chinese copy for the static page; the English lives in the HTML itself. */
+const ZH = {
+  "nav.about": "关于", "nav.papers": "论文", "nav.guest": "留言",
+  "hero.eyebrow": "阿里巴巴 Qwen 团队 · Agent Hub 创始人",
+  "f.edu": "教育",
+  "f.eduV": "中国科学技术大学 博士 <small>2021–2026</small>电子科技大学 本科 <small>2017–2021</small>",
+  "f.research": "研究方向",
+  "f.researchV": "<span>Reasoning</span><span>Cowork</span><span>大规模强化学习</span><span>LLM4Game</span><span>Test-time Scaling</span>",
+  "f.interests": "兴趣",
+  "f.interestsV": "<span>模型的 RSI（递归自我提升）</span><span>Thinking Pattern</span><span>Agentic Pattern</span><span>强化学习</span>",
+  "f.community": "社区",
+  "f.communityV": "知名 LLM 社区 <strong>Agent Hub</strong> 创始人",
+  "f.contact": "联系",
+  "f.contactNote": "欢迎小红书私信或发邮件：加入 Agent Hub、寻求合作、咨询实习机会。",
+  "stat.cites": "引用", "stat.h": "h 指数", "stat.models": "参与的 Qwen 模型",
+  "hint": "拖动旋转",
+  "cue": "<i></i>向下滚动，星辰随之重组",
+  "slot.galaxy": "星星组成的螺旋星系，可拖动或用方向键旋转。",
+  "slot.inf": "星星组成的无穷符号，可拖动或用方向键旋转。",
+  "pap.eyebrow": "论文",
+  "pap.h2": "代表<em>论文</em>",
+  "pap.lead": "按时间倒序排列。Qwen 技术报告见上方自我介绍中的链接。",
+  "pap.filterAria": "筛选论文",
+  "pap.note": "引用数来自 Google Scholar，2026 年 10 月 20 日。",
+  "foot.sky": "星空在五种色调间流转。",
+  "slot.spark": "星星组成的四角星，可拖动或用方向键旋转。",
+  "gb.eyebrow": "留言板", "gb.h2": "给我<em>留言</em>",
+  "gb.lead": "想加入 Agent Hub、寻求合作或咨询实习？在这里留言，我会直接收到。",
+  "gb.name": "称呼", "gb.contact": "邮箱 / 微信 / 小红书", "gb.contactPh": "选填，方便我回复你",
+  "gb.topic": "关于", "gb.t1": "加入 Agent Hub", "gb.t2": "合作", "gb.t3": "实习", "gb.t4": "打个招呼",
+  "gb.body": "留言", "gb.bodyPh": "简单介绍一下你，以及你想聊的事", "gb.send": "发送留言",
+  "gb.privacy": "本站匿名统计访问（国家/地区、来源、设备与浏览器），不保存 IP 地址。",
+  "gb.wall": "访客留言",
+  "sky.group": "星空色调"
+};
+
+/* ===== helpers ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const root = document.documentElement;
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fmt = n => n.toLocaleString("en-US");
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const hex2rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const rgb2hex = c => "#" + c.map(v => Math.round(clamp(v, 0, 255)).toString(16).padStart(2, "0")).join("");
+
+let LANG = (() => {
+  try { const q = new URLSearchParams(location.search).get("lang"); if (q === "zh" || q === "en") return q; } catch (e) {}
+  try { const s = localStorage.getItem("cl-lang"); if (s === "zh" || s === "en") return s; } catch (e) {}
+  return /^zh/i.test(navigator.language || "") ? "zh" : "en";
+})();
+const L = (en, zh) => LANG === "zh" ? zh : en;
+
+/* ===== sky colours: five palettes drift into one another, about every 15 seconds ===== */
+const Sky = (() => {
+  const keys = ["bg0", "bg1", "neb1", "neb2", "fg", "accent", "c0", "c1", "c2", "warm"];
+  const RGB = PALETTES.map(p => Object.fromEntries(keys.map(k => [k, hex2rgb(p[k])])));
+  const NP = PALETTES.length, PERIOD = 15, HOLD = .5;
+  const cur = {};
+  let paused = false, last = performance.now(), jump = null, lastCss = 0, cssSig = "", shown = -1;
+  // start on the palette that matches the visitor's time of day
+  let pos = (() => { const d = new Date(), h = d.getHours() + d.getMinutes() / 60; return h < 4.5 || h >= 20.5 ? 0 : h < 7.5 ? 3 : h < 16.5 ? 2 : 4; })();
+
+  const dots = $("#skyDots"), nameEl = $("#skyName"), pauseBtn = $("#skyPause");
+  function at(p) {
+    const i = Math.floor(p) % NP, j = (i + 1) % NP;
+    let t = clamp((p - Math.floor(p) - HOLD) / (1 - HOLD), 0, 1);
+    t = t * t * (3 - 2 * t);
+    const out = {};
+    for (const k of keys) out[k] = RGB[i][k].map((v, c) => v + (RGB[j][k][c] - v) * t);
+    return { out, idx: t < .5 ? i : j };
+  }
+  function writeCss(force) {
+    const sig = ["bg0", "bg1", "neb1", "neb2", "fg", "accent"].map(k => rgb2hex(cur[k])).join();
+    if (!force && sig === cssSig) return;
+    cssSig = sig;
+    sig.split(",").forEach((hex, n) => root.style.setProperty(`--${["bg0", "bg1", "neb1", "neb2", "fg", "accent"][n]}`, hex));
+  }
+  function label() {
+    nameEl.textContent = L(PALETTES[shown].en, PALETTES[shown].zh);
+    dots.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-current", String(i === shown)));
+  }
+  function render() {
+    dots.innerHTML = PALETTES.map((p, i) => `<button type="button" style="--c:${p.accent}" aria-label="${L(p.en, p.zh)}"></button>`).join("");
+    pauseBtn.setAttribute("aria-label", paused ? L("Resume the color drift", "继续颜色流转") : L("Pause the color drift", "暂停颜色流转"));
+    if (shown >= 0) label();
+  }
+  function frame(now) {
+    const dt = Math.min(.1, (now - last) / 1000); last = now;
+    if (!paused) pos = (pos + dt / PERIOD) % NP;
+    const { out, idx } = at(pos);
+    if (jump) {
+      const e = clamp((now - jump.t0) / 1400, 0, 1), ee = e * e * (3 - 2 * e);
+      for (const k of keys) out[k] = jump.from[k].map((v, c) => v + (out[k][c] - v) * ee);
+      if (e >= 1) jump = null;
+    }
+    Object.assign(cur, out);
+    if (idx !== shown) { shown = idx; label(); }
+    if (now - lastCss > 80) { lastCss = now; writeCss(); }
+    requestAnimationFrame(frame);
+  }
+  dots.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const i = [...dots.children].indexOf(b);
+    jump = { from: Object.fromEntries(keys.map(k => [k, cur[k].slice()])), t0: performance.now() };
+    pos = i;
+  });
+  pauseBtn.addEventListener("click", () => {
+    paused = !paused;
+    pauseBtn.setAttribute("aria-pressed", String(paused));
+    render();
+  });
+
+  render();
+  Object.assign(cur, at(pos).out); shown = at(pos).idx; label(); writeCss(true);
+  requestAnimationFrame(frame);
+  return { colors: () => cur, refresh: render };
+})();
+
+/* ===== avatar ===== */
+(function avatar() {
+  const img = $("#avatar");
+  let tried = false;
+  const fail = () => {
+    if (!tried && PROFILE.avatarFallback) { tried = true; img.src = PROFILE.avatarFallback; }
+    else img.hidden = true;
+  };
+  img.addEventListener("error", fail);
+  if (img.complete && !img.naturalWidth) fail();
+})();
+
+/* ===== meteors ===== */
+const Meteors = (() => {
+  const launchers = [];
+  if (!reduceMotion) document.querySelectorAll(".meteors i").forEach((m, k) => {
+    const launch = (first, now) => {
+      m.style.setProperty("--x", `${25 + Math.random() * 70}%`);
+      m.style.setProperty("--y", `${Math.random() * 40}%`);
+      m.style.setProperty("--a", `${-(18 + Math.random() * 22)}deg`);
+      m.style.setProperty("--d", `${1.1 + Math.random() * .8}s`);
+      m.style.setProperty("--w", now ? `${k * .25}s` : `${(first ? 2.5 + k * 7 : 6) + Math.random() * 9}s`);
+      m.style.animation = "none"; void m.offsetWidth; m.style.animation = "";
+    };
+    m.addEventListener("animationend", () => launch(false));
+    launch(true);
+    launchers.push(() => launch(false, true));
+  });
+  return { burst: () => launchers.forEach(f => f()) };
+})();
+
+/* ===== header ===== */
+const topBar = $("#top");
+const onScroll = () => topBar.classList.toggle("scrolled", scrollY > 12);
+addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+/* ===== introduction, with every model linked ===== */
+function renderIntro() {
+  const links = MODELS.map(m => `<a class="ilink" href="${m.url}" target="_blank" rel="noopener">${m.v}</a>`);
+  const list = LANG === "zh" ? `${links.slice(0, -1).join("、")} 和 ${links[links.length - 1]}` : `${links.slice(0, -1).join(", ")} and ${links[links.length - 1]}`;
+  $("#intro").innerHTML = L(
+    `I joined the <strong>Qwen foundation model team</strong> in May 2023 and have worked on ${list}.`,
+    `2023 年 5 月加入 <strong>Qwen 基模团队</strong>，参与了 ${list} 的研发。`);
+  $("#modelCount").textContent = MODELS.length;
+}
+
+/* ===== contact ===== */
+function renderContact() {
+  const box = $("#contact");
+  box.textContent = "";
+  const mail = document.createElement("a");
+  mail.className = "ilink"; mail.href = `mailto:${PROFILE.email}`; mail.textContent = PROFILE.email;
+  const copy = document.createElement("button");
+  copy.type = "button"; copy.textContent = L("Copy", "复制");
+  copy.addEventListener("click", () => {
+    navigator.clipboard?.writeText(PROFILE.email)
+      .then(() => { copy.textContent = L("Copied", "已复制"); setTimeout(() => copy.textContent = L("Copy", "复制"), 1600); })
+      .catch(() => { const r = document.createRange(); r.selectNodeContents(mail); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+  });
+  const scholar = document.createElement("a");
+  scholar.className = "ilink"; scholar.href = PROFILE.scholar; scholar.target = "_blank"; scholar.rel = "noopener"; scholar.textContent = "Google Scholar ↗";
+  box.append(mail, copy, scholar);
+
+  const x = $("#xhs");
+  x.textContent = "";
+  const xname = document.createElement(PROFILE.xhs.url ? "a" : "span");
+  if (PROFILE.xhs.url) { xname.className = "ilink"; xname.href = PROFILE.xhs.url; xname.target = "_blank"; xname.rel = "noopener"; }
+  xname.textContent = PROFILE.xhs.name;
+  const xlabel = document.createElement("span"); xlabel.className = "xhs-tag"; xlabel.textContent = L("Xiaohongshu", "小红书");
+  const xid = document.createElement("span"); xid.className = "xhs-tag"; xid.textContent = L(`ID ${PROFILE.xhs.id}`, `小红书号 ${PROFILE.xhs.id}`);
+  const xcopy = document.createElement("button");
+  xcopy.type = "button"; xcopy.textContent = L("Copy ID", "复制");
+  xcopy.addEventListener("click", () => {
+    navigator.clipboard?.writeText(PROFILE.xhs.id)
+      .then(() => { xcopy.textContent = L("Copied", "已复制"); setTimeout(() => xcopy.textContent = L("Copy ID", "复制"), 1600); })
+      .catch(() => { const r = document.createRange(); r.selectNodeContents(xid); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+  });
+  x.append(xlabel, xname, xid, xcopy);
+  if (PROFILE.agentHub) {
+    const s = $("#community strong");
+    if (s) s.outerHTML = `<a class="ilink" href="${PROFILE.agentHub}" target="_blank" rel="noopener"><strong>Agent Hub</strong></a>`;
+  }
+}
+
+/* ===== papers ===== */
+const Papers = (() => {
+  let firstOnly = false;
+  const bar = $("#pfilters"), years = $("#years");
+  bar.addEventListener("click", e => {
+    const b = e.target.closest(".pf"); if (!b) return;
+    firstOnly = b.dataset.f === "first";
+    render();
+  });
+  function render() {
+    const nFirst = PAPERS.filter(p => p.first).length;
+    bar.innerHTML = `<button class="pf" type="button" data-f="all" aria-pressed="${!firstOnly}">${L("All", "全部")}<sup>${PAPERS.length}</sup></button>`
+      + `<button class="pf" type="button" data-f="first" aria-pressed="${firstOnly}">✦ ${L("First author", "一作")}<sup>${nFirst}</sup></button>`;
+    const rows = PAPERS.filter(p => !firstOnly || p.first).sort((a, b) => b.year - a.year || (b.first - a.first) || b.cites - a.cites);
+    years.innerHTML = [...new Set(rows.map(p => p.year))].map(y => `
+      <div class="ygroup">
+        <div class="ylabel">${y}</div>
+        <ul class="plist">${rows.filter(p => p.year === y).map(p => `
+          <li class="pitem">
+            <div class="pmain">
+              <a class="ptitle" href="${p.url}" target="_blank" rel="noopener" lang="en">${p.title}</a>
+              <div class="pvenue"><span>${p.venue}</span>${p.first ? `<span class="fa">✦ ${L("First author", "一作")}</span>` : ""}</div>
+              <p class="psum">${L(p.summary, p.zh)}</p>
+              <div class="pauth" lang="en">${p.authors.replace(/\bC Li\b/, "<b>C Li</b>")}</div>
+            </div>
+            <div class="pcite">${fmt(p.cites)}<small>${L("citations", "引用")}</small></div>
+          </li>`).join("")}
+        </ul>
+      </div>`).join("");
+  }
+  return { render };
+})();
+
+/* ===== visits and guestbook (Supabase REST; nothing is sent until PROFILE.backend is set) ===== */
+const Guest = (() => {
+  const B = PROFILE.backend, live = !!(B.url && B.anonKey);
+  const api = (path, body) => fetch(`${B.url.replace(/\/$/, "")}/rest/v1/${path}`, {
+    method: "POST",
+    headers: Object.assign({ apikey: B.anonKey, "Content-Type": "application/json" },
+      B.anonKey.startsWith("eyJ") ? { Authorization: `Bearer ${B.anonKey}` } : {},   // legacy anon JWT; new sb_publishable keys go in apikey only
+      path.startsWith("rpc/") ? {} : { Prefer: "return=minimal" }),
+    body: JSON.stringify(body || {})
+  });
+  const store = (kind, k, v) => { try { const st = window[kind]; if (v === undefined) return st.getItem(k); st.setItem(k, v); } catch (e) { return null; } };
+  let visitors = 0, notes = [];
+
+  async function logVisit() {
+    if (!live || navigator.doNotTrack === "1" || navigator.globalPrivacyControl) return;
+    let vid = store("localStorage", "cl-vid");
+    if (!vid) { vid = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)); store("localStorage", "cl-vid", vid); }
+    if (!store("sessionStorage", "cl-logged")) {
+      store("sessionStorage", "cl-logged", "1");
+      const ua = navigator.userAgent;
+      const browser = /Edg\//.test(ua) ? "Edge" : /MicroMessenger/.test(ua) ? "WeChat" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Other";
+      let ref = ""; try { ref = document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) {}
+      api("visits", {
+        vid, path: location.pathname.slice(0, 200), lang: (navigator.language || "").slice(0, 16), referrer: ref.slice(0, 300),
+        tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 64), screen: `${screen.width}x${screen.height}`,
+        device: /Mobi|Android|iPhone|iPad/i.test(ua) ? "mobile" : "desktop", browser
+      }).catch(() => {});
+    }
+    try {
+      const r = await api("rpc/visit_stats");
+      if (r.ok) { const j = await r.json(); visitors = j.visitors || 0; renderFooter(); }
+    } catch (e) {}
+  }
+  async function loadNotes() {
+    if (!live) return;
+    try {
+      const r = await api("rpc/public_messages");
+      if (r.ok) { notes = await r.json(); renderWall(); }
+    } catch (e) {}
+  }
+  function renderFooter() {
+    const el = $("#visitorLine");
+    if (!visitors) { el.hidden = true; return; }
+    el.hidden = false;
+    el.textContent = L(`You are one of ${fmt(visitors)} visitors`, `你是第 ${fmt(visitors)} 位访客之一`);
+  }
+  function renderWall() {
+    const wrap = $("#wallWrap"), ul = $("#wall");
+    wrap.hidden = !notes.length;
+    ul.textContent = "";
+    const topicName = t => ({ agenthub: L("Agent Hub", "Agent Hub"), collab: L("Collaboration", "合作"), intern: L("Internship", "实习"), hello: L("Hello", "打招呼") })[t] || "";
+    for (const n of notes) {
+      const li = document.createElement("li");
+      const q = document.createElement("q"); q.textContent = n.body;
+      const by = document.createElement("span");
+      const d = new Date(n.created_at);
+      by.textContent = [n.name, topicName(n.topic), isNaN(d) ? "" : d.toLocaleDateString(LANG === "zh" ? "zh-CN" : "en-US", { year: "numeric", month: "short", day: "numeric" })].filter(Boolean).join(" · ");
+      li.append(q, by); ul.append(li);
+    }
+  }
+
+  const form = $("#gbForm"), status = $("#gbStatus"), send = $("#gbSend");
+  const say = (msg, cls) => { status.className = "gb-status" + (cls ? ` ${cls}` : ""); status.textContent = msg; };
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    if ($("#gbWebsite").value) return;                                   // honeypot: bots fill every field
+    const name = $("#gbName").value.trim(), contact = $("#gbContact").value.trim(), body = $("#gbBody").value.trim();
+    const topic = (form.querySelector('input[name="topic"]:checked') || {}).value || "hello";
+    if (!name || !body) { say(L("Please add your name and a message.", "请填写称呼和留言内容。"), "err"); (name ? $("#gbBody") : $("#gbName")).focus(); return; }
+    if (!live) {
+      const subject = encodeURIComponent(`[${topic}] ${name}`);
+      const text = encodeURIComponent(`${body}\n\n${contact ? `Contact: ${contact}` : ""}`);
+      say(L("Opening your email app…", "正在打开邮件应用…"));
+      location.href = `mailto:${PROFILE.email}?subject=${subject}&body=${text}`;
+      return;
+    }
+    const last = +store("localStorage", "cl-last-msg") || 0;
+    if (Date.now() - last < 60000) { say(L("Thanks! Please wait a minute before sending another.", "谢谢！请稍等一分钟再发送下一条。"), "err"); return; }
+    send.disabled = true; say(L("Sending…", "发送中…"));
+    try {
+      const r = await api("messages", { name: name.slice(0, 60), contact: contact.slice(0, 120), topic, body: body.slice(0, 2000), lang: LANG });
+      if (!r.ok) throw new Error(r.status);
+      store("localStorage", "cl-last-msg", String(Date.now()));
+      form.reset(); $("#gbT4").checked = true;
+      say(L("Sent. Thank you, I'll read it soon.", "已发送，谢谢！我会尽快查看。"), "ok");
+      Meteors.burst();
+    } catch (err) {
+      status.className = "gb-status err";
+      status.innerHTML = "";
+      status.append(L("Couldn't send right now. You can email me instead: ", "暂时发送失败，可以直接发邮件给我："));
+      const a = document.createElement("a"); a.href = `mailto:${PROFILE.email}`; a.textContent = PROFILE.email; status.append(a);
+    } finally { send.disabled = false; }
+  });
+
+  logVisit(); loadNotes();
+  return { refresh() { renderFooter(); renderWall(); if (!status.classList.contains("err") && !status.classList.contains("ok")) status.textContent = ""; } };
+})();
+
+/* ===== language switch ===== */
+const EN = {};
+const I18N_ATTRS = [["data-i18n-aria", "aria-label"], ["data-i18n-ph", "placeholder"]];
+document.querySelectorAll("[data-i18n]").forEach(el => { EN[el.dataset.i18n] = el.innerHTML; });
+I18N_ATTRS.forEach(([d, a]) => document.querySelectorAll(`[${d}]`).forEach(el => { EN[el.getAttribute(d)] = el.getAttribute(a); }));
+
+function setLang(l, save) {
+  LANG = l;
+  root.lang = l === "zh" ? "zh-CN" : "en";
+  const pick = k => (l === "zh" && ZH[k] != null) ? ZH[k] : EN[k];
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = pick(el.dataset.i18n); });
+  I18N_ATTRS.forEach(([d, a]) => document.querySelectorAll(`[${d}]`).forEach(el => el.setAttribute(a, pick(el.getAttribute(d)))));
+  const btn = $("#langBtn");
+  btn.textContent = l === "zh" ? "EN" : "中文";
+  btn.lang = l === "zh" ? "en" : "zh-CN";
+  btn.setAttribute("aria-label", l === "zh" ? "Switch to English" : "切换到中文");
+  renderIntro(); renderContact(); Papers.render(); Sky.refresh(); Guest.refresh();
+  if (save) { try { localStorage.setItem("cl-lang", l); } catch (e) {} }
+}
+$("#langBtn").addEventListener("click", () => setLang(LANG === "zh" ? "en" : "zh", true));
+setLang(LANG, false);
+
+/* ===== the star field: WebGL2, HDR accumulation, mip-chain bloom, filmic tone mapping ===== */
+(function stars() {
+  const cv = $("#stars");
+  let gl = null;
+  try { gl = cv.getContext("webgl2", { antialias: false, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" }); } catch (e) {}
+  if (!gl) { console.warn("Star field disabled: WebGL2 is not available."); return; }
+  let HDR = !!(gl.getExtension("EXT_color_buffer_float") || gl.getExtension("EXT_color_buffer_half_float"));
+
+  const STAR_VS = `#version 300 es
+    precision highp float;
+    in vec4 aS0, aS1, aS2, aS3;           // figure positions (xyz) and brightness (w)
+    in vec3 aScatter;
+    in vec4 aSeed;                         // x stagger, y size, z phase, w background flag
+    uniform vec4 uFrom, uTo;               // one-hot figure selectors
+    uniform vec3 uXA, uXB;                 // slot centre (css px) and scale
+    uniform vec2 uRes, uRot;
+    uniform float uT, uTime, uIntro, uScroll, uScale, uMaxPt;
+    uniform vec3 uMouse;                   // x, y, energy
+    uniform vec2 uMouseVel;
+    uniform mat3 uTilt;
+    uniform vec3 uC0, uC1, uC2, uWarm;     // linear-light star colours
+    out vec3 vColor;
+    out float vI, vCore, vHalo;
+
+    mat3 rotY(float a) { float c = cos(a), s = sin(a); return mat3(c, 0., -s, 0., 1., 0., s, 0., c); }
+    mat3 rotX(float a) { float c = cos(a), s = sin(a); return mat3(1., 0., 0., 0., c, s, 0., -s, c); }
+    vec4 pick(vec4 w) { return aS0 * w.x + aS1 * w.y + aS2 * w.z + aS3 * w.w; }
+    vec3 place(vec4 w, mat3 R, vec3 X) {
+      vec3 p = pick(w).xyz;
+      if (w.x > .5) {                      // the galaxy turns in its own plane, then tilts
+        float a = uTime * .03; float c = cos(a), s = sin(a);
+        p.xy = vec2(c * p.x - s * p.y, s * p.x + c * p.y);
+        p = uTilt * p;
+      }
+      p = R * p;
+      return vec3(X.xy, 0.) + p * vec3(X.z, -X.z, X.z);
+    }
+
+    void main() {
+      float bg = aSeed.w;
+      float ti = clamp((uT - aSeed.x * .22) / .78, 0., 1.);
+      float sc = smoothstep(0., .3, ti) * (1. - smoothstep(.7, 1., ti));
+      float intro = clamp((uIntro - aSeed.x * .45) / .55, 0., 1.);
+      intro = intro * intro * (3. - 2. * intro);
+      sc = max(sc, 1. - intro);
+      sc = mix(sc, 1., bg);
+      float wb = smoothstep(.42, .58, ti);
+
+      mat3 R = rotY(uRot.x) * rotX(uRot.y);
+      vec3 shape = mix(place(uFrom, R, uXA), place(uTo, R, uXB), wb);
+      float shapeLum = mix(pick(uFrom).w, pick(uTo).w, wb);
+
+      vec3 s = aScatter;
+      float depth = (s.z + 1.) * .5;
+      s.y = mod(s.y + uScroll * (.12 + .5 * depth) + 1.25, 2.5) - 1.25;
+      float hv = max(uRes.x, uRes.y) * .5;
+      vec3 r3 = R * vec3(s.x * uRes.x * .5, s.y * uRes.y * .5, s.z * hv);
+      vec3 scat = vec3(uRes * .5 + vec2(r3.x, -r3.y), r3.z);
+
+      vec3 p = mix(shape, scat, sc);
+      vec2 dir = scat.xy - shape.xy;       // curved flight between figure and sky
+      p.xy += vec2(-dir.y, dir.x) * sin(3.14159 * sc) * (aSeed.z - .5) * .5 * (1. - bg);
+
+      float fz = uRes.y * 1.7;
+      float k = clamp(fz / (fz - p.z), .4, 2.5);
+      vec2 q = uRes * .5 + (p.xy - uRes * .5) * k;
+      vec2 d = q - uMouse.xy;
+      float dist = length(d);
+      float fall = exp(-dist * dist / (150. * 150.));
+      q += (dist > .001 ? d / dist : vec2(0.)) * fall * uMouse.z * 52. + uMouseVel * fall * 5.;
+      gl_Position = vec4(q.x / uRes.x * 2. - 1., 1. - q.y / uRes.y * 2., 0., 1.);
+
+      // many faint stars, some medium, a few bright HDR stars whose cores burn white and bloom
+      float r = aSeed.y;
+      float core = r < .7 ? mix(.6, 1.25, r / .7) : (r < .95 ? mix(1.25, 2.1, (r - .7) / .25) : mix(2.1, 3.2, (r - .95) / .05));
+      float inten = r < .7 ? mix(.35, .75, r / .7) : (r < .95 ? mix(.85, 1.7, (r - .7) / .25) : mix(3.5, 7., (r - .95) / .05));
+      float halo = r < .9 ? 0. : (r < .95 ? .3 : 1.);
+      float formed = 1. - sc;
+      inten *= mix(.5, shapeLum * 1.15, formed) * mix(1., .62, bg);   // the scattered sky stays quiet behind text
+      inten *= .88 + .12 * sin(uTime * (.4 + aSeed.z * 1.2) + aSeed.z * 40.);
+
+      float dof = smoothstep(1.25, 1.9, k) * sc;          // near stars drift out of focus
+      float cpx = core * k * uScale;
+      if (cpx < 1.4) { inten *= cpx * cpx / 1.96; cpx = 1.4; }   // sub-pixel stars fade by coverage, never flicker
+      float sizeMul = 1. + 2.6 * dof;
+      float spriteMul = halo > .5 ? 9. : (halo > 0. ? 4. : 2.6);
+      float sprite = min(cpx * spriteMul * sizeMul, uMaxPt);
+      gl_PointSize = sprite;
+      vCore = mix(cpx * sizeMul / sprite, .62, dof);
+      vHalo = halo * (1. - dof);
+      vI = inten / (sizeMul * sizeMul);
+
+      float cr = fract(aSeed.y * 91.7 + aSeed.z * 13.3);
+      vec3 col = cr < .58 ? uC0 : (cr < .85 ? uC1 : uC2);
+      float gal = (uFrom.x * (1. - wb) + uTo.x * wb) * formed * (1. - bg);
+      float r0 = length(aS0.xy);
+      vColor = mix(col, uWarm, gal * exp(-r0 * r0 * 28.) * .85);
+    }`;
+  const STAR_FS = `#version 300 es
+    precision highp float;
+    in vec3 vColor;
+    in float vI, vCore, vHalo;
+    out vec4 o;
+    void main() {
+      vec2 p = gl_PointCoord * 2. - 1.;
+      float d2 = dot(p, p);
+      if (d2 > 1.) discard;
+      float core = exp(-d2 / (vCore * vCore) * 2.);
+      float halo = vHalo * .5 * pow(1. + d2 * 60., -1.5) * (1. - d2);
+      o = vec4(vColor * (core + halo) * vI, 1.);
+    }`;
+  const QUAD_VS = `#version 300 es
+    out vec2 vUv;
+    void main() { vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2)); vUv = p; gl_Position = vec4(p * 2. - 1., 0., 1.); }`;
+  const DOWN_FS = `#version 300 es
+    precision highp float;
+    uniform sampler2D uSrc; uniform vec2 uTexel;
+    in vec2 vUv; out vec4 o;
+    vec3 tap(vec2 off) { return texture(uSrc, vUv + uTexel * off).rgb; }
+    void main() {          // 13-tap filter: soft, stable downsampling without blocky artefacts
+      vec3 r = tap(vec2(0.)) * .125
+        + (tap(vec2(-2., 2.)) + tap(vec2(2., 2.)) + tap(vec2(-2., -2.)) + tap(vec2(2., -2.))) * .03125
+        + (tap(vec2(0., 2.)) + tap(vec2(-2., 0.)) + tap(vec2(2., 0.)) + tap(vec2(0., -2.))) * .0625
+        + (tap(vec2(-1., 1.)) + tap(vec2(1., 1.)) + tap(vec2(-1., -1.)) + tap(vec2(1., -1.))) * .125;
+      o = vec4(r, 1.);
+    }`;
+  const UP_FS = `#version 300 es
+    precision highp float;
+    uniform sampler2D uSrc; uniform vec2 uTexel;
+    in vec2 vUv; out vec4 o;
+    vec3 tap(vec2 off) { return texture(uSrc, vUv + uTexel * off).rgb; }
+    void main() {          // 3x3 tent upsample, accumulated into the next level
+      vec3 r = (tap(vec2(-1., 1.)) + tap(vec2(1., 1.)) + tap(vec2(-1., -1.)) + tap(vec2(1., -1.)))
+        + (tap(vec2(0., 1.)) + tap(vec2(-1., 0.)) + tap(vec2(1., 0.)) + tap(vec2(0., -1.))) * 2.
+        + tap(vec2(0.)) * 4.;
+      o = vec4(r / 16., 1.);
+    }`;
+  const COMP_FS = `#version 300 es
+    precision highp float;
+    uniform sampler2D uScene, uBloom; uniform float uBloomStr, uExposure;
+    in vec2 vUv; out vec4 o;
+    void main() {
+      vec3 c = texture(uScene, vUv).rgb + texture(uBloom, vUv).rgb * uBloomStr;
+      c = 1. - exp(-c * uExposure);                      // filmic shoulder: bright cores roll off to white
+      c = pow(c, vec3(1. / 2.2));
+      c += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - .5) / 255.;   // dither the glow
+      c = max(c, 0.);
+      o = vec4(c, max(max(c.r, c.g), c.b));
+    }`;
+
+  function compile(type, src) {
+    const sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+    return sh;
+  }
+  function program(vs, fs) {
+    const pr = gl.createProgram();
+    gl.attachShader(pr, compile(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, compile(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr));
+    return pr;
+  }
+  let starProg, downProg, upProg, compProg;
+  try {
+    starProg = program(STAR_VS, STAR_FS);
+    downProg = program(QUAD_VS, DOWN_FS);
+    upProg = program(QUAD_VS, UP_FS);
+    compProg = program(QUAD_VS, COMP_FS);
+  } catch (e) { console.warn("Star field disabled:", e); return; }
+  const uniforms = (pr, names) => Object.fromEntries(names.map(n => [n, gl.getUniformLocation(pr, n)]));
+  const U = uniforms(starProg, ["uFrom", "uTo", "uXA", "uXB", "uRes", "uRot", "uT", "uTime", "uIntro", "uScroll", "uScale", "uMaxPt", "uMouse", "uMouseVel", "uTilt", "uC0", "uC1", "uC2", "uWarm"]);
+  const UD = uniforms(downProg, ["uSrc", "uTexel"]);
+  const UU = uniforms(upProg, ["uSrc", "uTexel"]);
+  const UC = uniforms(compProg, ["uScene", "uBloom", "uBloomStr", "uExposure"]);
+
+  /* ---- deterministic star data: the same sky on every visit ---- */
+  let seed = 20261020;
+  const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const gauss = () => { let u = 0; while (!u) u = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * rnd()); };
+
+  const N = innerWidth < 700 ? 4600 : 8200;
+  const NBG = Math.round(N * .26), NS = N - NBG;
+  const LEVELS = innerWidth < 700 ? 5 : 6;
+
+  const curve = (fn, n) => Array.from({ length: n + 1 }, (_, i) => fn(i / n));
+
+  // strokes sampled by arc length: parallel strands of different brightness, a stroke that swells
+  // and thins, and beaded density along its length; separate sub-paths are never joined
+  function strokes(paths, n, width) {
+    const segs = []; let L = 0;
+    for (const { pts, closed } of paths) {
+      const m = closed ? pts.length : pts.length - 1;
+      for (let i = 0; i < m; i++) {
+        const a = pts[i], b = pts[(i + 1) % pts.length];
+        const l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (l > 0) { segs.push({ a, b, l, L0: L }); L += l; }
+      }
+    }
+    const out = new Float32Array(n * 4);
+    for (let k = 0; k < n; k++) {
+      let u;
+      do { u = rnd() * L; } while (rnd() > .5 + .5 * (.5 + .5 * Math.sin(u * 7.3 + 1.1)));
+      let lo = 0, hi = segs.length - 1;
+      while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (segs[mid].L0 <= u) lo = mid; else hi = mid - 1; }
+      const s = segs[lo], f = (u - s.L0) / s.l;
+      const tx = (s.b[0] - s.a[0]) / s.l, ty = (s.b[1] - s.a[1]) / s.l;
+      const wl = width * (.7 + .5 * (.5 + .5 * Math.sin(u * 4.1 + 2)));
+      const lr = rnd();
+      const [lane, lum] = lr < .42 ? [-.36, 1] : lr < .76 ? [.2, .72] : lr < .94 ? [.62, .5] : [rnd() < .5 ? -1.4 : 1.5, .32];
+      const off = lane * wl + gauss() * wl * .1;
+      out[k * 4] = s.a[0] + (s.b[0] - s.a[0]) * f - ty * off;
+      out[k * 4 + 1] = s.a[1] + (s.b[1] - s.a[1]) * f + tx * off;
+      out[k * 4 + 2] = (s.a[2] || 0) + ((s.b[2] || 0) - (s.a[2] || 0)) * f + gauss() * wl * .4;
+      out[k * 4 + 3] = lum * (.75 + .25 * rnd());
+    }
+    return out;
+  }
+
+  function galaxy(n) {
+    const out = new Float32Array(n * 4), b = .23, a = .07, thMax = 3.4 * Math.PI, E = Math.exp(b * thMax) - 1;
+    for (let k = 0; k < n; k++) {
+      const r0 = rnd(); let x, y, z, w;
+      if (r0 < .15) { const rr = Math.abs(gauss()) * .085, th = rnd() * 6.2832; x = Math.cos(th) * rr; y = Math.sin(th) * rr; z = gauss() * .04; w = 1.25; }
+      else if (r0 < .25) { const rr = .1 + Math.pow(rnd(), .7) * .85, th = rnd() * 6.2832; x = Math.cos(th) * rr; y = Math.sin(th) * rr; z = gauss() * .02; w = .4; }
+      else {
+        const arm = rnd() < .5 ? 0 : Math.PI;
+        const th = Math.log(1 + rnd() * E) / b;
+        const r = Math.min(1.02, a * Math.exp(b * th));
+        const ww = .018 + .07 * r, lr = rnd();
+        const [lane, lum] = lr < .5 ? [-.35, 1] : lr < .85 ? [.25, .72] : [.95, .45];
+        const off = lane * ww + gauss() * ww * .3;
+        x = Math.cos(th + arm) * (r + off); y = Math.sin(th + arm) * (r + off); z = gauss() * .015;
+        w = lum * (rnd() < .04 ? 1.5 : .8 + .2 * rnd());
+      }
+      out[k * 4] = x; out[k * 4 + 1] = y; out[k * 4 + 2] = z; out[k * 4 + 3] = w;
+    }
+    return out;
+  }
+  const infinity = () => strokes([{ pts: curve(t => { const a = t * 6.2832, d = 1 + Math.sin(a) ** 2; return [Math.cos(a) / d * .98, Math.sin(a) * Math.cos(a) / d * 1.45, Math.sin(a) * .28]; }, 360), closed: true }], NS, .07);
+  const astroid = (cx, cy, r) => curve(t => { const a = t * 6.2832, c = Math.cos(a), sn = Math.sin(a); return [cx + r * c * c * c, cy + r * sn * sn * sn, Math.sin(a * 2) * r * .08]; }, 260);
+  const sparkle = () => strokes([{ pts: astroid(-.1, -.06, .9), closed: true }, { pts: astroid(.74, .6, .3), closed: true }], NS, .06);
+  const shapes = [galaxy(NS), infinity(), sparkle()];
+  for (const S of shapes) for (let i = NS - 1; i > 0; i--) {          // random star-to-point assignment per figure
+    const j = Math.floor(rnd() * (i + 1));
+    for (let c = 0; c < 4; c++) { const t = S[i * 4 + c]; S[i * 4 + c] = S[j * 4 + c]; S[j * 4 + c] = t; }
+  }
+  const pad = S => { const out = new Float32Array(N * 4); out.set(S); return out; };
+  const scatter = new Float32Array(N * 3), seeds = new Float32Array(N * 4);
+  for (let i = 0; i < N; i++) {
+    let x, y;
+    if (rnd() < .45) { const t = rnd() * 2.5 - 1.25; x = t; y = -.32 * t + .05 + gauss() * .19 * (.6 + .4 * rnd()); }  // a star band across the sky
+    else { x = rnd() * 2.5 - 1.25; y = rnd() * 2.5 - 1.25; }
+    scatter[i * 3] = x; scatter[i * 3 + 1] = y; scatter[i * 3 + 2] = rnd() * 2 - 1;
+    seeds[i * 4] = rnd(); seeds[i * 4 + 1] = rnd(); seeds[i * 4 + 2] = rnd(); seeds[i * 4 + 3] = i >= NS ? 1 : 0;
+  }
+  const starVAO = gl.createVertexArray();
+  gl.bindVertexArray(starVAO);
+  function attr(name, data, size) {
+    const loc = gl.getAttribLocation(starProg, name); if (loc < 0) return;
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+  }
+  shapes.forEach((S, i) => attr(`aS${i}`, pad(S), 4));
+  attr("aScatter", scatter, 3);
+  attr("aSeed", seeds, 4);
+  gl.bindVertexArray(null);
+  const quadVAO = gl.createVertexArray();
+
+  gl.useProgram(starProg);
+  { // galaxy tilt: incline around X, then turn around Z (column-major upload)
+    const ax = 1.08, az = -.5, cx = Math.cos(ax), sx = Math.sin(ax), cz = Math.cos(az), sz = Math.sin(az);
+    const M = [[cz, -sz * cx, sz * sx], [sz, cz * cx, -cz * sx], [0, sx, cx]];
+    gl.uniformMatrix3fv(U.uTilt, false, [M[0][0], M[1][0], M[2][0], M[0][1], M[1][1], M[2][1], M[0][2], M[1][2], M[2][2]]);
+  }
+  gl.uniform1f(U.uMaxPt, gl.getParameter(gl.ALIASED_POINT_SIZE_RANGE)[1] || 64);
+
+  /* ---- render targets ---- */
+  let scene = null, mips = [];
+  function target(w, h) {
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, HDR ? gl.RGBA16F : gl.RGBA8, w, h, 0, gl.RGBA, HDR ? gl.HALF_FLOAT : gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    const ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return { tex, fb, w, h, ok };
+  }
+  const free = t => { if (t) { gl.deleteTexture(t.tex); gl.deleteFramebuffer(t.fb); } };
+  function buildTargets(w, h) {
+    free(scene); mips.forEach(free); mips = [];
+    scene = target(w, h);
+    if (!scene.ok && HDR) { HDR = false; free(scene); scene = target(w, h); }   // no float targets: fall back to 8-bit
+    let mw = w, mh = h;
+    for (let i = 0; i < LEVELS; i++) { mw = Math.max(1, mw >> 1); mh = Math.max(1, mh >> 1); mips.push(target(mw, mh)); }
+  }
+
+  /* ---- layout and anchors: scrolling only produces a progress value; the shader does the rest ---- */
+  const slots = [...document.querySelectorAll(".slot[data-shape]")].sort((a, b) => a.dataset.shape - b.dataset.shape);
+  let W = 0, H = 0, scale = 1, off0 = 0, offL = 0;
+  function resize() {
+    W = innerWidth; H = innerHeight;
+    scale = Math.min(2, devicePixelRatio || 1);
+    if (W * H * scale * scale > 4.2e6) scale = Math.sqrt(4.2e6 / (W * H));
+    const bw = Math.max(1, Math.round(W * scale)), bh = Math.max(1, Math.round(H * scale));
+    if (!scene || bw !== cv.width || bh !== cv.height) { cv.width = bw; cv.height = bh; buildTargets(bw, bh); }
+    const docC = el => { const r = el.getBoundingClientRect(); return r.top + scrollY + r.height / 2; };
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - H);
+    off0 = Math.max(0, H / 2 - docC(slots[0]));                                   // first figure is whole at the top
+    offL = -Math.max(0, (docC(slots[slots.length - 1]) - maxScroll) - H / 2);     // last figure is whole at the bottom
+  }
+  addEventListener("resize", resize);
+  new ResizeObserver(resize).observe(document.body);
+  resize();
+
+  const oneHot = i => [i === 0 ? 1 : 0, i === 1 ? 1 : 0, i === 2 ? 1 : 0, i === 3 ? 1 : 0];
+  function anchors() {
+    const f = H / 2, last = slots.length - 1;
+    const c = slots.map(el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, el.dataset.fit === "width" ? r.width * .45 : Math.min(r.width, r.height) / 2]; });
+    const v = c.map((x, i) => x[1] + (i === 0 ? off0 : i === last ? offL : 0));
+    if (f <= v[0]) return { a: 0, b: 0, t: 0, c };
+    for (let i = 0; i < last; i++) if (f <= v[i + 1]) return { a: i, b: i + 1, t: (f - v[i]) / Math.max(1, v[i + 1] - v[i]), c };
+    return { a: last, b: last, t: 0, c };
+  }
+
+  /* ---- interaction: the cursor pushes stars aside, dragging turns the figure ---- */
+  const mouse = { x: -9999, y: -9999, e: 0, vx: 0, vy: 0, lx: 0, ly: 0, lt: 0 };
+  addEventListener("pointermove", e => {
+    const now = performance.now(), dt = Math.max(8, now - mouse.lt);
+    if (mouse.lt) {
+      const vx = (e.clientX - mouse.lx) / dt * 16, vy = (e.clientY - mouse.ly) / dt * 16;
+      mouse.vx += (vx - mouse.vx) * .35; mouse.vy += (vy - mouse.vy) * .35;
+      mouse.e = Math.min(1, mouse.e + Math.hypot(vx, vy) / 60);
+    }
+    mouse.x = e.clientX; mouse.y = e.clientY; mouse.lx = e.clientX; mouse.ly = e.clientY; mouse.lt = now;
+  }, { passive: true });
+
+  let yaw = 0, pitch = 0, vyaw = 0, vpitch = 0, dragging = false, dx0 = 0, dy0 = 0;
+  for (const el of slots) {
+    el.addEventListener("pointerdown", e => { dragging = true; dx0 = e.clientX; dy0 = e.clientY; el.setPointerCapture?.(e.pointerId); });
+    el.addEventListener("pointermove", e => {
+      if (!dragging) return;
+      vyaw = (e.clientX - dx0) * .006; vpitch = (e.clientY - dy0) * .004;
+      dx0 = e.clientX; dy0 = e.clientY; yaw += vyaw; pitch = clamp(pitch + vpitch, -.75, .75);
+    });
+    const end = () => { dragging = false; };
+    el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end); el.addEventListener("lostpointercapture", end);
+    el.addEventListener("keydown", e => {
+      const m = { ArrowLeft: [-.05, 0], ArrowRight: [.05, 0], ArrowUp: [0, -.04], ArrowDown: [0, .04] }[e.key];
+      if (m) { e.preventDefault(); vyaw += m[0]; vpitch += m[1]; }
+    });
+  }
+
+  /* ---- frame ---- */
+  const lin = c => c.map(v => Math.pow(v / 255, 2.2));
+  const t0 = performance.now();
+  function frame(now) {
+    const time = reduceMotion ? 0 : (now - t0) / 1000;
+    const { a, b, t, c } = anchors();
+    const col = Sky.colors();
+
+    // 1. stars, accumulated additively in linear light
+    gl.bindFramebuffer(gl.FRAMEBUFFER, scene.fb);
+    gl.viewport(0, 0, scene.w, scene.h);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+    gl.useProgram(starProg); gl.bindVertexArray(starVAO);
+    gl.uniform4fv(U.uFrom, oneHot(a)); gl.uniform4fv(U.uTo, oneHot(b));
+    gl.uniform3fv(U.uXA, c[a]); gl.uniform3fv(U.uXB, c[b]);
+    gl.uniform1f(U.uT, b === a ? 0 : t);
+    gl.uniform2f(U.uRes, W, H);
+    gl.uniform1f(U.uScale, scale);
+    gl.uniform1f(U.uTime, time);
+    gl.uniform1f(U.uIntro, reduceMotion ? 1 : Math.min(1, (now - t0) / 2800));
+    gl.uniform1f(U.uScroll, scrollY / Math.max(1, H) * .5);
+    if (!dragging) { yaw += vyaw; vyaw *= .95; pitch = clamp(pitch + vpitch, -.75, .75); vpitch *= .9; pitch *= .985; }
+    gl.uniform2f(U.uRot, yaw + (reduceMotion ? 0 : .2 * Math.sin(time * .11)), pitch);
+    mouse.e *= .94; mouse.vx *= .9; mouse.vy *= .9;
+    gl.uniform3f(U.uMouse, mouse.x, mouse.y, mouse.e);
+    gl.uniform2f(U.uMouseVel, mouse.vx, mouse.vy);
+    if (col.c0) { gl.uniform3fv(U.uC0, lin(col.c0)); gl.uniform3fv(U.uC1, lin(col.c1)); gl.uniform3fv(U.uC2, lin(col.c2)); gl.uniform3fv(U.uWarm, lin(col.warm)); }
+    gl.drawArrays(gl.POINTS, 0, N);
+
+    // 2. bloom: downsample chain, then tent upsample back up, accumulating every level
+    gl.bindVertexArray(quadVAO);
+    gl.disable(gl.BLEND);
+    gl.useProgram(downProg);
+    gl.activeTexture(gl.TEXTURE0); gl.uniform1i(UD.uSrc, 0);
+    let src = scene;
+    for (const m of mips) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, m.fb); gl.viewport(0, 0, m.w, m.h);
+      gl.bindTexture(gl.TEXTURE_2D, src.tex); gl.uniform2f(UD.uTexel, 1 / src.w, 1 / src.h);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      src = m;
+    }
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE);
+    gl.useProgram(upProg); gl.uniform1i(UU.uSrc, 0);
+    for (let i = mips.length - 1; i > 0; i--) {
+      const from = mips[i], to = mips[i - 1];
+      gl.bindFramebuffer(gl.FRAMEBUFFER, to.fb); gl.viewport(0, 0, to.w, to.h);
+      gl.bindTexture(gl.TEXTURE_2D, from.tex); gl.uniform2f(UU.uTexel, 1 / from.w, 1 / from.h);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    // 3. composite with a filmic curve onto the page
+    gl.disable(gl.BLEND);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, cv.width, cv.height);
+    gl.useProgram(compProg);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, scene.tex); gl.uniform1i(UC.uScene, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mips[0].tex); gl.uniform1i(UC.uBloom, 1);
+    gl.uniform1f(UC.uBloomStr, 1.0 / LEVELS);
+    gl.uniform1f(UC.uExposure, 1.1);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.activeTexture(gl.TEXTURE0);
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
