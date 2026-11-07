@@ -121,6 +121,8 @@ p { text-wrap: pretty; }
 
 /* ---------- shared ---------- */
 .eyebrow { font-size: 11.5px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--accent); margin: 0 0 20px; }
+.eyebrow a { color: inherit; text-decoration: none; border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent); transition: border-color .3s; }
+.eyebrow a:hover { border-color: currentColor; }
 .slot { position: relative; width: 100%; cursor: grab; touch-action: pan-y; border-radius: 50%; }
 .slot:active { cursor: grabbing; }
 .slot-hint { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-3); opacity: 0; transition: opacity .5s; white-space: nowrap; pointer-events: none; }
@@ -394,7 +396,7 @@ const PROFILE = {
   scholar: "https://scholar.google.com/citations?user=5pidFF8AAAAJ",
   email: "lichengpeng.lcp@alibaba-inc.com",
   xhs: { name: "白苏苏", id: "6897268817", url: "" },   // Xiaohongshu; set url to a profile link to make the name clickable
-  agentHub: "",   // optional link; "Agent Hub" in the Community row becomes a link once set
+  agentHub: "https://agent-hub-community.github.io/",   // "Agent Hub" in the eyebrow and the Community row link here
   // Supabase project URL and public key: the legacy "anon" key or a new "sb_publishable_…" key (see supabase-setup.sql). Until set, visits are not logged
   // and the guestbook opens the visitor's email app instead.
   backend: { url: "https://eulhqfnbozkavshjmxzq.supabase.co", anonKey: "sb_publishable_3da6nNMiZwL-VrZjJjBKEw__0iwAl7o" },
@@ -673,6 +675,8 @@ function renderContact() {
   if (PROFILE.agentHub) {
     const s = $("#community strong");
     if (s) s.outerHTML = `<a class="ilink" href="${PROFILE.agentHub}" target="_blank" rel="noopener"><strong>Agent Hub</strong></a>`;
+    const eb = $(".hero .eyebrow");
+    if (eb && !eb.querySelector("a")) eb.innerHTML = eb.innerHTML.replace("Agent Hub", `<a href="${PROFILE.agentHub}" target="_blank" rel="noopener">Agent Hub</a>`);
   }
 }
 
